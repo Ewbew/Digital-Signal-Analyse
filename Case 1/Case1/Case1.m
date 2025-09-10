@@ -27,11 +27,11 @@ x_ubelastet = x(1100:N-1);
 mean_belastet = mean(x_belastet);
 mean_ubelastet = mean(x_ubelastet);
 
-var_belastet = var(x_belastet);
-var_ubelastet = var(x_ubelastet);
+var_belastet = var(x_belastet,1);
+var_ubelastet = var(x_ubelastet,1);
 
-std_belastet = std(x_belastet);
-std_ubelastet = std(x_ubelastet);
+std_belastet = std(x_belastet,1);
+std_ubelastet = std(x_ubelastet,1);
 
 fprintf('Belastet (1 kg):   mean = %.6g, var = %.6g, std = %.6g\n', mean_belastet, var_belastet, std_belastet);
 fprintf('Ubelastet (0 kg):  mean = %.6g, var = %.6g, std = %.6g\n\n', mean_ubelastet, var_ubelastet, std_ubelastet);
@@ -76,7 +76,6 @@ xline(mu - 2*sigma, 'g--', 'LineWidth', 1.2, HandleVisibility='off');
 xline(mu + 3*sigma, 'b--', 'LineWidth', 1.2, 'DisplayName','±3σ');
 xline(mu - 3*sigma, 'b--', 'LineWidth', 1.2, HandleVisibility='off');
 legend('show');
-
 
 %Histogrammerne for både den belastede og ubelastede tilstand viser en tydelig klokkeform, hvilket tyder på, at målesignalet (og støjen) er tilnærmelsesvist normalfordelt.
 
@@ -286,3 +285,56 @@ end
 
 % Adjust layout
 sgtitle('Histograms and Variance of MA Filtered Signals');
+
+
+
+%% Beregn den maksimale af FIR-midlingsfilteret:
+
+% Definer den ønskede maksimale indsvingningstid i sekunder 
+max_indsvingningstid_sec = 0.1; % 100 millisekunder 
+
+% Beregn det tilsvarende antal samples baseret på samplingsfrekvensen 
+max_indsvingningstid_samples = max_indsvingningstid_sec * fs; 
+
+% Beregn den maksimale længde af FIR-midlingsfilteret 
+max_fir_length = floor(max_indsvingningstid_samples);
+
+disp(['Den maksimale længde af FIR-midlingsfilteret: ', num2str(max_fir_length), ...
+    'samples']); 
+
+%% Eksponentielt midlingsfilter
+clear; close all; clc;
+
+% Parametre
+alpha = [0.1, 0.5, 0.9];   % Forskellige alpha-værdier
+N = 100;                   % Længde af signal
+x = [zeros(1,50), ones(1,50)*5];  % Testsekvens med et spring ved n=50
+
+% Initialisering af output
+y = zeros(length(alpha), N);
+
+% Beregning af filtrerede signaler for hver alpha
+for k = 1:length(alpha)
+    for n = 2:N
+        y(k,n) = alpha(k) * x(n) + (1 - alpha(k)) * y(k,n-1);
+    end
+end
+
+% Plot resultaterne
+figure;
+subplot(2,1,1);
+plot(x, 'DisplayName', 'Inputsignal');
+xlabel('n'); ylabel('x[n]');
+title('Inputsignal');
+legend; grid on;
+
+subplot(2,1,2);
+plot(x, 'DisplayName', 'Inputsignal'); hold on;
+for k = 1:length(alpha)
+    plot(y(k,:), 'DisplayName', sprintf('Outputsignal (\\alpha = %.1f)', alpha(k)));
+end
+xlabel('n'); ylabel('y[n]');
+title('Eksponentielt midlingsfilter');
+legend; grid on;
+
+
