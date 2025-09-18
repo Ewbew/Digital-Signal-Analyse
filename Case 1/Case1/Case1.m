@@ -390,3 +390,4 @@ title('Eksponentielt midlingsfilter (\alpha=0.0198) vs. Midlingsfilter (M=100)')
 ylabel('kg'); xlabel('Samples');
 legend('Eksponentielt midlingsfilter (\alpha=0.0198)','Midlingsfilter M=100','Location','best');
 hold off
+%%
