@@ -337,7 +337,6 @@ for n = 1:length(x)
     yold = y(n);
 end
 
-figure(1);
 plot(y);  % plot filtreret med eksponentielt midlingsfilter (alpha = 0.1)
 title('data med eksponentielt midlingsfilter alpha=0.1');
 ylabel('kg');
@@ -352,9 +351,8 @@ for n = 1:length(x)
     yold = y(n);
 end
 
-figure(50);
-plot(y);  % plot filtreret med eksponentielt midlingsfilter (alpha = 0.1)
-title('data med eksponentielt midlingsfilter alpha=0.1');
+plot(y);  % plot filtreret med eksponentielt midlingsfilter (alpha = 0.5)
+title('data med eksponentielt midlingsfilter alpha=0.5');
 ylabel('kg');
 xlabel('Samples');
 
@@ -367,9 +365,8 @@ for n = 1:length(x)
     yold = y(n);
 end
 
-figure(3);
-plot(y);  % plot filtreret med eksponentielt midlingsfilter (alpha = 0.1)
-title('data med eksponentielt midlingsfilter alpha=0.1');
+plot(y);  % plot filtreret med eksponentielt midlingsfilter (alpha = 0.9)
+title('data med eksponentielt midlingsfilter alpha=0.9');
 ylabel('kg');
 xlabel('Samples');
 
