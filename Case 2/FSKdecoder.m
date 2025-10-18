@@ -7,12 +7,67 @@
 % Tsymbol = symbol duration in seconds
 
 % The output is the decoded message from the audio signal
+% function x = FSKdecoder(signal, fstart, fend, Tsymbol, fs)
+% 
+% N = length(signal);
+% 
+% samples_per_symbol = Tsymbol*fs;
+% 
+% remainder = mod(N, samples_per_symbol);
+% if remainder ~= 0
+%     pad = samples_per_symbol - remainder;
+%     signal = [signal; zeros(pad,1)];
+% end
+% 
+% N = length(signal);
+% 
+% n_symbols = N/samples_per_symbol;
+% 
+% x = '';
+% 
+% farray = linspace(fstart,fend, 256);
+% 
+% for k = 1:n_symbols
+% 
+%     start_idx = (k-1)*samples_per_symbol+1;
+%     end_idx = k*samples_per_symbol;
+%     segment = signal(start_idx:end_idx);
+%     N = length(segment);
+% 
+%     Perform DFT on the segment, find the dominant frequency, map that
+%     frequency to the synmbol and append that symbol to the x string
+% 
+%     X_m = [];
+%     m_unique = ceil((N+1)/2);
+% 
+%     for i = 0:m_unique-1
+%         sum = 0;
+%         for j = 0:N-1
+%             sum = sum + segment(j+1)*exp((-(2*pi*1i)/N)*i*j);
+%         end
+%     X_m(i+1) = sum;
+%     end
+%     frequency_bins = (0:m_unique-1)*(fs/N);
+% 
+%     [~, max_idx] = max(abs(X_m));
+% 
+%     dom_freq = frequency_bins(max_idx);
+% 
+%     [~, symbol_idx] = min(abs(farray - dom_freq));
+% 
+% 
+%     x = [x, char(symbol_idx)];  
+% end
+
+
 function x = FSKdecoder(signal, fstart, fend, Tsymbol, fs)
 
 N = length(signal);
 
-samples_per_symbol = Tsymbol*fs;
+% 1) HELTAL samples pr. symbol
+samples_per_symbol = round(Tsymbol*fs);
 
+% Pad til helt antal symboler
 remainder = mod(N, samples_per_symbol);
 if remainder ~= 0
     pad = samples_per_symbol - remainder;
@@ -20,44 +75,34 @@ if remainder ~= 0
 end
 
 N = length(signal);
-
-n_symbols = N/samples_per_symbol;
+n_symbols = N / samples_per_symbol;
 
 x = '';
 
-farray = linspace(fstart,fend, 256);
+% 2) 256 kandidater (rækkevektor)
+farray = linspace(fstart, fend, 256);
+farray = farray(:).';                 % tving til 1×256
+
+% 3) Forbered eksponential-bank én gang (Ns×256)
+Ns = samples_per_symbol;
+n  = (0:Ns-1).' / fs;                 % Ns×1
+E  = exp(-1j*2*pi * (n * farray));    % (Ns×1)*(1×256) => Ns×256
 
 for k = 1:n_symbols
-    
-    start_idx = (k-1)*samples_per_symbol+1;
-    end_idx = k*samples_per_symbol;
+    start_idx = (k-1)*samples_per_symbol + 1;
+    end_idx   = k*samples_per_symbol;
+
+    % 4) Sørg for rækkevektor 1×Ns
     segment = signal(start_idx:end_idx);
-    N = length(segment);
+    segment = segment(:).';           % 1×Ns
 
-    % Perform DFT on the segment, find the dominant frequency, map that
-    % frequency to the synmbol and append that symbol to the x string
-    
-    X_m = [];
-    m_unique = ceil((N+1)/2);
+    % Projektion kun på 256 frekvenser: (1×Ns)*(Ns×256) = 1×256
+    X = segment * E;
 
-    for i = 0:m_unique-1
-        sum = 0;
-        for j = 0:N-1
-            sum = sum + segment(j+1)*exp((-(2*pi*1i)/N)*i*j);
-        end
-    X_m(i+1) = sum;
-    end
-    frequency_bins = (0:m_unique-1)*(fs/N);
-
-    [~, max_idx] = max(abs(X_m));
-
-    dom_freq = frequency_bins(max_idx);
-
-    [~, symbol_idx] = min(abs(farray - dom_freq));
-    x = [x, char(symbol_idx)];  % 
+    % Vælg stærkeste kandidat og map direkte til tegn
+    [~, symbol_idx] = max(abs(X).^2);
+    x = [x, char(symbol_idx)];
 end
-
-
 
 
 
@@ -108,3 +153,4 @@ for i=1:length(myids),
 end
 
 %}
+

@@ -11,24 +11,32 @@ function x = FSKdecoder(signal, fstart, fend, Tsymbol, fs)
 
 N = length(signal);
 
-n_symbols = round(N/(Tsymbol*fs));
-
 samples_per_symbol = Tsymbol*fs;
+
+remainder = mod(N, samples_per_symbol);
+if remainder ~= 0
+    pad = samples_per_symbol - remainder;
+    signal = [signal; zeros(pad,1)];
+end
+
+N = length(signal);
+
+n_symbols = N/samples_per_symbol;
 
 x = '';
 
 farray = linspace(fstart,fend, 256);
 
 for k = 1:n_symbols
-    
+
     start_idx = (k-1)*samples_per_symbol+1;
-    end_idx = k*samples_per_symbol,N;
+    end_idx = k*samples_per_symbol;
     segment = signal(start_idx:end_idx);
     N = length(segment);
 
-    % Perform DFT on the segment, find the dominant frequency, map that
-    % frequency to the synmbol and append that symbol to the x string
-    
+    Perform DFT on the segment, find the dominant frequency, map that
+    frequency to the synmbol and append that symbol to the x string
+
     X_m = [];
     m_unique = ceil((N+1)/2);
 
@@ -46,6 +54,10 @@ for k = 1:n_symbols
     dom_freq = frequency_bins(max_idx);
 
     [~, symbol_idx] = min(abs(farray - dom_freq));
+
+        --- HURTIG VERSION: beregn kun for de 256 ASCII-frekvenser ---
+
+
     x = [x, char(symbol_idx)];  % 
 end
 
@@ -100,3 +112,4 @@ for i=1:length(myids),
 end
 
 %}
+
