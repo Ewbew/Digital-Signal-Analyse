@@ -211,7 +211,7 @@ max_indsvingningstid_samples = max_indsvingningstid_sec * fs;
 max_fir_length = floor(max_indsvingningstid_samples);
 
 disp(['Den maksimale længde af FIR-midlingsfilteret: ', num2str(max_fir_length), ...
-    'Samples']); 
+    ' Samples']); 
 
 
 

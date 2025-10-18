@@ -1,0 +1,102 @@
+% function x = FSKgenerator(signal, fstart, fstop, Tsymbol, fs)
+% 
+% signal is the audio signal in the time domain
+% fs is sampling frequency
+% fstart = transmission band frequency start
+% fend = transmission band frequency end
+% Tsymbol = symbol duration in seconds
+
+% The output is the decoded message from the audio signal
+function x = FSKdecoder(signal, fstart, fend, Tsymbol, fs)
+
+N = length(signal);
+
+n_symbols = round(N/(Tsymbol*fs));
+
+samples_per_symbol = Tsymbol*fs;
+
+x = '';
+
+farray = linspace(fstart,fend, 256);
+
+for k = 1:n_symbols
+    
+    start_idx = (k-1)*samples_per_symbol+1;
+    end_idx = k*samples_per_symbol,N;
+    segment = signal(start_idx:end_idx);
+    N = length(segment);
+
+    % Perform DFT on the segment, find the dominant frequency, map that
+    % frequency to the synmbol and append that symbol to the x string
+    
+    X_m = [];
+    m_unique = ceil((N+1)/2);
+
+    for i = 0:m_unique-1
+        sum = 0;
+        for j = 0:N-1
+            sum = sum + segment(j+1)*exp((-(2*pi*1i)/N)*i*j);
+        end
+    X_m(i+1) = sum;
+    end
+    frequency_bins = (0:m_unique-1)*(fs/N);
+
+    [~, max_idx] = max(abs(X_m));
+
+    dom_freq = frequency_bins(max_idx);
+
+    [~, symbol_idx] = min(abs(farray - dom_freq));
+    x = [x, char(symbol_idx)];  % 
+end
+
+
+
+
+
+
+
+%{
+% Compute the frequency bins for the DFT
+frequency_bins = (0:m_unique-1)*(fs/N);
+
+% Find the dominant frequency in the DFT result
+[~, max_idx] = max(abs(X_m));
+dominant_freq = frequency_bins(max_idx);
+
+% Map the dominant frequency to the corresponding symbol
+symbol = mapFrequencyToSymbol(dominant_freq, fstart, fend);
+x = [x, symbol]; % Append the decoded symbol to the output string
+    
+%}
+
+%{
+X = [];
+for j = 0:length(frequency_bins)-1
+    sum = 0;
+    for i = 0:N-1
+        sum = sum + x(i+1)*exp(((-2*pi*1i)/N)*i*j);
+    end
+X(j+1) = sum;
+end
+
+%}
+
+%{
+The encoder algorithm
+
+function x = FSKgenerator(mysymbolseq, fstart, fend, Tsymbol, fs)
+
+farray = linspace(fstart, fend, 256); % 256 frequencies spread out in band
+A = 1; % amplitude
+n = 0:(round(Tsymbol*fs)-1);
+
+myids = double(mysymbolseq); % convert 'abcd' to [97 98 99 100].. ie. 256 possible values
+
+x = []; %empty array
+for i=1:length(myids),
+    myfreq = farray(myids(i)); % choose freq for current char
+    sig = A*cos(2*pi*n*myfreq/fs); % create signal
+    x = [x sig]; % add to full signal
+end
+
+%}
