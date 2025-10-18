@@ -313,7 +313,7 @@ plot(dists, SNRdB, 'o-','LineWidth',1.5);
 grid on;
 xlabel('Afstand [m]');
 ylabel('SNR [dB]');
-title('SNR (peak/median fra linear power) vs. afstand');
+title('SNR (peak/median) vs. afstand');
 
 
 
@@ -375,7 +375,7 @@ for k = 1:numel(Ts_list)
 
     % Bit Error Rate (grov): antal forkerte tegn * 8 / total bits
     n_char_err = count_char_errors(yhat, msg);
-    BER(k)     = (n_char_err * 8) / (length(msg) * 8);
+    BER(k) = (n_char_err * 8) / (length(msg) * 8);
 end
 
 
@@ -404,7 +404,7 @@ else
 end
 
 
-%% C) Kort diskussion (kan copy/pastes til rapporten som kommentar)
+%% C) Kort diskussion
 
 % Vi ser, at når Tsymbol bliver kort (høj symbolrate/bitrate), begynder
 % dekoderen at lave fejl. Det hænger sammen med DFT/vindue-teori:
@@ -470,7 +470,7 @@ xlabel('Frekvens [Hz]'); ylabel('Amplitude [dB]');
 title(sprintf('Vindue-effekt ved N=%d (Ts=%.02f s), f_0=%g Hz', N, Ts, f0));
 legend('Rektangel (smal HL, høje sidelobes)','Hann (bredere HL, lavere sidelobes)', 'Location','southwest');
 
-%% Lille tabel til rapporten (teoretisk hovedlobebredde for rektangel)
+%% Lille tabel til rapporten 
 fprintf('\nTeoretisk hovedlobebredde (rektangulært vindue, nul-til-nul): Δf ≈ 2*fs/N\n');
 for Ts = Ts_list
     N = round(Ts*fs);

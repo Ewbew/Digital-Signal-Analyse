@@ -60,6 +60,7 @@
 % end
 
 
+% Opdateret funktion så den kun regner på de 256 frekvenser
 function x = FSKdecoder(signal, fstart, fend, Tsymbol, fs)
 
 N = length(signal);
