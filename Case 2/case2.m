@@ -253,7 +253,7 @@ SNRdB = nan(size(files));
 
 figure; clf; hold on; grid on;
 for k = 1:numel(files)
-    % --- indlæs og trim stille perioder (samme som i opg. 2) ---
+    % --- indlæs og trim stille perioder (samme som i opg. 2) 
     path = matlab.desktop.editor.getActiveFilename;
     thisFolder = fileparts(path);
     audioFile = fullfile(thisFolder, files(k));
@@ -417,8 +417,8 @@ end
 %% Opgave 4B – Betydning af vindueslængde N for amplitude-spektret
 clear; close all; clc;
 
-fs = 30000;              % samplingsfrekvens (samme som i casen)
-f0 = 4000;               % en tone inde i jeres bånd (kun ét symbol)
+fs = 30000;              % samplingsfrekvens
+f0 = 4000;               % en tone inde i båndet (kun ét symbol)
 Ts_list = [0.50 0.20 0.10 0.05 0.02];   % symboltider => forskellige N
 colors = lines(numel(Ts_list));
 
