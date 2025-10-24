@@ -85,9 +85,7 @@ legend('show');
 %% Opg 1 - PLot af frekvensspektret
 
 % FFT af ubelastet signal – brug detrend til at fjerne offset/trend
-
 Nf = length(x_ubelastet);             % antal samples
-
 
 % Fjern både DC-offset og evt. langsom drift (lineær trend)
 x_fft_u = detrend(x_ubelastet);
@@ -97,10 +95,8 @@ x_fft_b = detrend(x_belastet);
 X_u = fft(x_fft_u);
 X_b = fft(x_fft_b);
 
-
 % Frekvensakse (0 ... fs)
 f = (0:Nf-1)*(fs/Nf);
-
 
 % Plot kun den positive halvdel af spektret
 figure;
@@ -126,11 +122,10 @@ grid on;
 %% Opg 1: Forskel i bit-niveau i gram
 
 
-delta_counts = mean_ubelastet - mean_belastet;   % = 298.44
-LSB_g = 1000 / delta_counts;                     % = 3.3514 g/count
-LSB_kg = 1 / delta_counts;                       % = 0.003351 kg/count
-
-fprintf('LSB = %.4f g/count (%.6f kg/count)\n', LSB_g, LSB_kg);
+delta_counts = mean_ubelastet - mean_belastet;   
+LSB_g = 1000 / delta_counts;                     
+LSB_kg = 1 / delta_counts;                       
+fprintf('LSB = %.4f g/count (%.6f kg/count)\n\n', LSB_g, LSB_kg);
 
 
 
