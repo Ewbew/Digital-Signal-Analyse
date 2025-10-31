@@ -6,7 +6,6 @@ clear; clc; close all;
 % Plot the time domain signal
 t = (0:length(x)-1)/fs; % Time vector
 figure;
-subplot(4,1,1);
 plot(t, x);
 title('Time Domain Signal');
 xlabel('Time (s)');
@@ -16,15 +15,24 @@ ylabel('Amplitude');
 n = length(x);
 f = (0:n-1)*(fs/n); % Frequency vector
 xfft = abs(fft(x));
-subplot(4,1,2);
+figure;
+subplot(2,1,1); % full scale amplitude spectrum
 plot(f, xfft);
 xlim([0 fs/2]); % Limit x-axis to Nyquist frequency
 title('Amplitude Spectrum');
 xlabel('Frequency (Hz)');
 ylabel('Magnitude');
 
+subplot(2,1,2); % limited amplitude spectrum
+plot(f, xfft);
+xlim([0 3000]); % Limit x-axis to 3000Hz
+title('Amplitude Spectrum');
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+
 % Plot the spectrogram
-subplot(4,1,3);
+figure;
+subplot(2,1,1);
 spectrogram(x, 256, 250, 256, fs, 'yaxis');
 title('Spectrogram');
 xlabel('Time (s)');
@@ -34,9 +42,9 @@ colorbar;
 
 % Compute and plot the second spectrogram with the same window size but
 % limited y-axis
-subplot(4,1,4);
+subplot(2,1,2);
 spectrogram(x, 256, 250, 256, fs, 'yaxis');
-title('Spectrogram with Same Window Size');
+title('Spectrogram with zoom on y-axis');
 xlabel('Time (s)');
 ylabel('Frequency (kHz)');
 ylim([0 5]); % Limit y-axis to 5 kHz
@@ -111,6 +119,7 @@ subplot(2,1,1);
 plot(f_orig, abs(H_orig)); % Plot magnitude response
 title('Original Signal Frequency Response');
 xlabel('Frequency (Hz)');
+xlim([0 4000]);
 ylabel('Magnitude');
 
 subplot(2,1,2);
@@ -119,6 +128,7 @@ f_filt = f_filt * fs / (2 * pi); % Convert normalized frequency to Hz
 plot(f_filt, abs(H_filt)); % Plot magnitude response
 title('Filtered Signal Frequency Response');
 xlabel('Frequency (Hz)');
+xlim([0 5000]);
 ylabel('Magnitude');
 
 % Play the filtered signal
