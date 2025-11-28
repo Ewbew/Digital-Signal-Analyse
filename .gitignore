@@ -1,1 +1,5 @@
 .DS*
+
+
+# I don't want to update the docx file via github, but use onedrive instead
+*.docx
