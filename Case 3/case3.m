@@ -50,8 +50,8 @@ ylabel('Frequency (kHz)');
 ylim([0 5]); % Limit y-axis to 5 kHz
 colorbar;
 
-
-%soundsc(x, fs);
+%%
+soundsc(x, fs);
 
 %%
 
