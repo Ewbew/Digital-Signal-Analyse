@@ -94,7 +94,7 @@ chirp = double(chirp);    % optional: use double for soundsc
 soundsc(chirp/32768, 48000);
 %%
 
-filePath = fullfile(audioFolder, 'Sonar0_26m.dat');
+filePath = fullfile(audioFolder, 'Sonar2m.dat');
 
 % Load the data
 data = load(filePath);
